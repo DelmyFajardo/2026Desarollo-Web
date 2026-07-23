@@ -57,11 +57,11 @@ export type Headers = Record<string, string>;
  *   u.search   // → "?id=1"
  *   u.searchParams.entries() // → iterador [["id","1"]]
  *
- * Si la URL no es válida, `new URL()` lanza TypeError — no hace falta
- * que lo manejes aparte, se propagará solo.
+ * Si la URL no es válida, `new URL()` lanza TypeError
  */
 export function parseUrl(url: string): UrlParts {
-  // TODO: tu implementación aquí
+  /** esta funcion analiza las partes de  la URL, si la URL no es válida lanza TypeError
+*/
   const u = new URL(url);
   const queryArray = [...u.searchParams.entries()];
   return {
