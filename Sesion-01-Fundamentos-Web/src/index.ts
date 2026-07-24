@@ -125,6 +125,9 @@ export function classifyStatus(code: number): StatusCategory {
  * nombre y valor. Recuerda `.trim()` para quitar espacios sobrantes.
  */
 export function parseHeaders(text: string): Headers{ 
+  /** Esta función lee un bloque de texto desordenado con saltos de línea y 
+   * lo convierte en un diccionario de datos limpio (clave-valor), 
+   * ignorando renglones vacíos o con formato incorrecto*/
   const headers: Headers = {};
   if (typeof text !== "string" || !text.trim()) {
     return headers;
@@ -175,7 +178,8 @@ export function summarizeRequest(
   status: number,
   headersText: string,
 ): string {
-  // TODO: tu implementación aquí
+  /** Esta función combina las funciones anteriores para generar un resumen legible de la petición HTTP,
+   *  incluyendo la URL, el código de estado y las cabeceras. */
   const category = classifyStatus(status);
   const headesObj = parseHeaders(headersText);
 
