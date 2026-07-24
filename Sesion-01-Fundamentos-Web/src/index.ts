@@ -124,10 +124,37 @@ export function classifyStatus(code: number): StatusCategory {
  * Pista: `text.split("\n")` te da las líneas; `String.split(":")` te separa
  * nombre y valor. Recuerda `.trim()` para quitar espacios sobrantes.
  */
-export function parseHeaders(text: string): Headers {
-  // TODO: tu implementación aquí
-  throw new Error("Not implemented");
+export function parseHeaders(text: string): Headers{ 
+  const headers: Headers = {};
+  if (typeof text !== "string" || !text.trim()) {
+    return headers;
+  }
+  const lines = text.split("\n");
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    if (!line || !line.trim()) {
+      continue;
+    }
+    const colonIndex = line.indexOf(":");
+    if (colonIndex === -1) {
+      continue; 
+    }
+    
+    const name = line.substring(0, colonIndex).trim();
+    const value = line.substring(colonIndex + 1).trim();
+
+    if (name) {
+      headers[name] = value;
+    }
+  }
+
+  return headers;
+
 }
+
+
 
 /**
  * TODO: Combina las funciones anteriores en un resumen legible.
@@ -149,7 +176,25 @@ export function summarizeRequest(
   headersText: string,
 ): string {
   // TODO: tu implementación aquí
-  throw new Error("Not implemented");
+  const category = classifyStatus(status);
+  const headesObj = parseHeaders(headersText);
+
+  let result = 'Resumen de la petición\n';
+  result += '──────────────────────\n';
+  result += `URL:     ${url}\n`;
+  result += `Status:  ${status} (${category})\n`;
+  result += 'Headers:\n'; 
+
+  const keys = Object.keys(headesObj);
+  if (keys.length === 0) {
+    result += '  (ninguna cabecera proporcionada)';
+  } else {
+    for (const key of keys) {
+      result += '  • ${key}: ${headesObj[key]}\n';
+    }
+  }
+
+  return result.trim();
 }
 
 // ---------------------------------------------------------------------------
