@@ -1,13 +1,4 @@
-/**
- * Grader / Tests para la Tarea Sesion 2 - HTML
- *
- * NO requiere dependencias externas. Solo Node.js 18+.
- *
- *   node tests/grader.test.js
- *
- * El script lee los .html de la raiz y verifica que cumplan
- * con los requisitos de la sesion. Si todo pasa, imprime PASS.
- */
+/**pruebas */
 
 const fs = require("fs");
 const path = require("path");
