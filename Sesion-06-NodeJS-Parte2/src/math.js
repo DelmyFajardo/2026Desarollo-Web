@@ -1,6 +1,6 @@
 /**
  * math.js — Módulo de utilidades matemáticas (named exports)
- * Tarea Sesión 6 · Desarrollo Web
+ * Tarea Sesión 6 Desarrollo Web
  */
 export const PI = 3.14159;
 

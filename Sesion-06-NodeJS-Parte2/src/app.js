@@ -1,7 +1,5 @@
 /**
- * Procesador de logs y sistema de inventario — Tarea Sesión 6
- * Universidad Mariano Gálvez de Guatemala · Desarrollo Web
- *
+ * Procesador de logs y sistema de inventario — Tarea Sesión 6 *
  * Implementa las funciones marcadas con TODO para que los tests pasen.
  * No cambies los nombres exportados ni su firma.
  *

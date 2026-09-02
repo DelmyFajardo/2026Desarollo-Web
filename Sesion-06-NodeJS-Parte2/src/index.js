@@ -1,7 +1,6 @@
 /**
  * index.js — Punto de re-export (barrel exports)
  * Tarea Sesión 6 · Desarrollo Web
- *
  * Centraliza toda la API pública del proyecto en un solo módulo.
  */
 

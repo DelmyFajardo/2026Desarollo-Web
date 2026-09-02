@@ -3,6 +3,7 @@
  * Uso:  npm start   (o)   npm run dev  → node --watch index.js
  */
 import { filtrarLogs, rutaAbsoluta, parsearEnv, registrarProceso, __dirname } from './src/index.js';
+
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
