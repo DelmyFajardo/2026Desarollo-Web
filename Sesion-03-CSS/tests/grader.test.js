@@ -1,3 +1,4 @@
+/**pruebas */
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { readFileSync, existsSync } from 'node:fs';
