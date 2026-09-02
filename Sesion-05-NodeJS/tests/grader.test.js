@@ -1,3 +1,5 @@
+/**pruebas */
+
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync, readFileSync } from 'node:fs';
