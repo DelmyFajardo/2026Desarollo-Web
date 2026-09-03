@@ -106,5 +106,30 @@ export function rutaAbsoluta(rutaRelativa) {
  * @returns {Record<string, string>}
  */
 export function parsearEnv(contenido) {
-    throw new Error('Not implemented: parsearEnv');
+const config = {};
+    if (!contenido) return config;
+
+    const lineas = contenido.split('\n');
+
+    for (let linea of lineas) {
+        linea = linea.trim();
+        
+        // Ignora líneas vacías o comentarios (#)
+        if (!linea || linea.startsWith('#')) {
+            continue;
+        }
+
+        // Separa por el primer signo =
+        const signoIgualIndice = linea.indexOf('=');
+        if (signoIgualIndice !== -1) {
+            const clave = linea.substring(0, signoIgualIndice).trim().toUpperCase();
+            const valor = linea.substring(signoIgualIndice + 1).trim();
+            
+            if (clave) {
+                config[clave] = valor;
+            }
+        }
+    }
+
+    return config;
 }
