@@ -46,10 +46,6 @@ function leerBody(req) {
     });
 }
 
-// =====================================================
-// TODO: implementa las siguientes funciones
-// =====================================================
-
 /**
  * Parsea los argumentos de la línea de comandos (process.argv).
  * Acepta: --nombre <valor> y --puerto <valor>.
@@ -58,8 +54,20 @@ function leerBody(req) {
  * @param {string[]} argv - Arreglo completo (incluye las posiciones 0 y 1).
  * @returns {{ nombre: string, puerto: number }}
  */
-export function parsearArgumentos(argv) {
-    throw new Error('Not implemented: parsearArgumentos');
+export function parsearArgumentos(argv = []) {
+    let nombre = 'invitado';
+        let puerto = 3000;
+
+        for (let i = 0; i < argv.length; i++) {
+            if (argv[i] === '--nombre' && argv[i + 1]) {
+                nombre = argv[i + 1];
+            }
+            if (argv[i] === '--puerto' && argv[i + 1]) {
+                puerto = Number(argv[i + 1]);
+            }
+        }
+
+        return { nombre, puerto };
 }
 
 /**
@@ -71,8 +79,12 @@ export function parsearArgumentos(argv) {
  * @param {NodeJS.ProcessEnv} env
  * @returns {{ puerto: number, nombreApp: string, archivoDatos: string }}
  */
-export function obtenerConfig(env) {
-    throw new Error('Not implemented: obtenerConfig');
+export function obtenerConfig(env = {}) {
+    const puerto = env.PORT ? Number(env.PORT) : 3000;
+    const nombreApp = env.NOMBRE_APP || 'mensajes-api';
+    const archivoDatos = env.ARCHIVO_DATOS || 'data/mensajes.json';
+
+        return { puerto, nombreApp, archivoDatos };
 }
 
 /**
@@ -80,7 +92,12 @@ export function obtenerConfig(env) {
  * @returns {{ plataforma: string, nucleos: number, memoriaLibreMB: number, hostname: string }}
  */
 export function infoSistema() {
-    throw new Error('Not implemented: infoSistema');
+    const plataforma = os.platform();
+    const nucleos = os.cpus().length;
+    const memoriaLibreMB = Math.round(os.freemem() / (1024 * 1024));
+    const hostname = os.hostname();
+
+    return { plataforma, nucleos, memoriaLibreMB, hostname };
 }
 
 /**
