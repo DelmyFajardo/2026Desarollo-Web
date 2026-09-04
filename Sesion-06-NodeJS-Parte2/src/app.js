@@ -71,8 +71,40 @@ export function generarId() {
  * @returns {Promise<number>} cantidad de líneas que coincidieron (0 si no hay).
  */
 export async function filtrarLogs(origen, destino, texto) {
-    throw new Error('Not implemented: filtrarLogs');
-}
+    let coincidenciaCount = 0;
+    let buffer = '';
+
+    // Transform Stream para procesar fragmentos y filtrar por línea
+    async function* transformarLineas(source) {
+        for await (const chunk of source) {
+            buffer += chunk.toString('utf-8');
+            const lineas = buffer.split('\n');
+            
+            // Mantenemos la última línea incompleta en el buffer
+            buffer = lineas.pop() ?? '';
+
+            for (const linea of lineas) {
+                if (linea.includes(texto)) {
+                    coincidenciaCount++;
+                    yield linea + '\n';
+                }
+            }
+        }
+        // Procesamos lo que haya quedado en el buffer
+        if (buffer.length > 0 && buffer.includes(texto)) {
+            coincidenciaCount++;
+            yield buffer + '\n';
+        }
+    }
+
+    const entrada = createReadStream(origen);
+    const salida = createWriteStream(destino);
+
+    // Usamos pipeline con la función generadora (Transform)
+    await pipeline(entrada, transformarLineas, salida);
+
+    return coincidenciaCount;
+    }
 
 /**
  * Lee un archivo de texto y devuelve las líneas como arreglo,
@@ -83,7 +115,17 @@ export async function filtrarLogs(origen, destino, texto) {
  * @returns {Promise<string[]>}
  */
 export async function leerLineas(ruta) {
-    throw new Error('Not implemented: leerLineas');
+    const stream = createReadStream(ruta, { encoding: 'utf-8' });
+        let contenido = '';
+
+        for await (const chunk of stream) {
+            contenido += chunk;
+        }
+
+        return contenido
+            .split('\n')
+            .map((linea) => linea.trim())
+            .filter((linea) => linea.length > 0);
 }
 
 /**
