@@ -22,9 +22,6 @@ before(async () => {
     tmpDir = mkdtempSync(join(tmpdir(), 'dw-s5-'));
 });
 
-// ===========================================================
-// Estructura del proyecto
-// ===========================================================
 describe('Estructura del proyecto', () => {
     it('src/app.js debe existir', () => {
         assert.ok(existsSync(resolve(root, 'src/app.js')), 'src/app.js no encontrado');
