@@ -136,7 +136,7 @@ export async function leerLineas(ruta) {
  * @returns {string}
  */
 export function rutaAbsoluta(rutaRelativa) {
-    throw new Error('Not implemented: rutaAbsoluta');
+    return join(__dirname, rutaRelativa);
 }
 
 /**
