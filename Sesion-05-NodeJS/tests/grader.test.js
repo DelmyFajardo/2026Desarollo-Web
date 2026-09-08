@@ -7,8 +7,6 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { fileURLToPath } from 'node:url';
-import { pathToFileURL } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
@@ -18,7 +16,7 @@ let mod;
 let tmpDir;
 
 before(async () => {
-    mod = await import(resolve(root, 'src/app.js'));
+    mod = await import('../src/app.js');
     tmpDir = mkdtempSync(join(tmpdir(), 'dw-s5-'));
 });
 
