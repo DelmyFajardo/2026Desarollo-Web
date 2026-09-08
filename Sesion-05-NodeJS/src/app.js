@@ -21,7 +21,6 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-
 // =====================================================
 // Utilidades (ya implementadas — no las modifiques)
 // =====================================================
@@ -117,7 +116,7 @@ export function crearLogger() {
     return {
         registrar(mensaje) {
             const fechaIso = new Date().toISOString();
-            emisor.emit('registro', '[${fechaIso}] ${mensaje}');
+            emisor.emit('registro', `[${fechaIso}] ${mensaje}`);
         },
         onRegistro(fn) {
             emisor.on('registro', fn);
@@ -154,25 +153,25 @@ export async function leerMensajes(archivoDatos) {
  * @returns {Promise<{id: string, texto: string, fecha: string} | null>}
  */
 export async function agregarMensaje(archivoDatos, texto) {
-    if (!texto || texto.trim() === " ") {
-            return null;
-        }
+    if (!texto || typeof texto !== 'string' || texto.trim().length === 0) {
+        return null;
+    }
 
-        const nuevoMensaje = {
-            id: generarId(),
-            texto: texto.trim(),
-            fecha: new Date().toISOString()
-        };
+    const nuevoMensaje = {
+        id: generarId(),
+        texto: texto.trim(),
+        fecha: new Date().toISOString()
+    };
 
-        const mensajes = await leerMensajes(archivoDatos);
-        mensajes.push(nuevoMensaje);
+    const mensajes = await leerMensajes(archivoDatos);
+    mensajes.push(nuevoMensaje);
 
-        const directorio = path.dirname(archivoDatos);
-        await fs.mkdir(directorio, { recursive: true });
+    const directorio = path.dirname(archivoDatos);
+    await fs.mkdir(directorio, { recursive: true });
 
-        await fs.writeFile(archivoDatos, JSON.stringify(mensajes, null, 2), 'utf-8');
+    await fs.writeFile(archivoDatos, JSON.stringify(mensajes, null, 2), 'utf-8');
 
-        return nuevoMensaje;
+    return nuevoMensaje;
 }
 
 /**
@@ -187,7 +186,65 @@ export async function agregarMensaje(archivoDatos, texto) {
  * @returns {import('node:http').Server}
  */
 export function crearServidor(config = {}) {
-    throw new Error('Not implemented: crearServidor');
+
+    const {
+        archivoDatos = 'data/mensajes.json',
+        nombreApp = 'mensajes-api',
+        logger
+    } = config;
+
+    return http.createServer(async (req, res) => {
+        const url = req.url;
+        const metodo = req.method;
+
+        // Registrar petición si existe un logger
+        if (logger) {
+            logger.registrar(`${metodo} ${url}`);
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+
+        // GET /
+        if (metodo === 'GET' && url === '/') {
+            res.writeHead(200);
+            return res.end(JSON.stringify({
+                mensaje: `API ${nombreApp} activa`,
+                hora: new Date().toISOString(),
+                sistema: infoSistema()
+            }));
+        }
+
+        // GET /mensajes
+        if (metodo === 'GET' && url === '/mensajes') {
+            const mensajes = await leerMensajes(archivoDatos);
+            res.writeHead(200);
+            return res.end(JSON.stringify(mensajes));
+        }
+
+        // POST /mensajes
+        if (metodo === 'POST' && url === '/mensajes') {
+            try {
+                const bodyStr = await leerBody(req);
+                const body = JSON.parse(bodyStr || '{}');
+                const nuevo = await agregarMensaje(archivoDatos, body.texto);
+
+                if (!nuevo) {
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({ error: 'El campo texto es requerido' }));
+                }
+
+                res.writeHead(201);
+                return res.end(JSON.stringify(nuevo));
+            } catch {
+                res.writeHead(400);
+                return res.end(JSON.stringify({ error: 'JSON inválido' }));
+            }
+        }
+
+        // Ruta no encontrada
+        res.writeHead(404);
+        return res.end(JSON.stringify({ error: 'Ruta no encontrada' }));
+    });
 }
 
 /**
@@ -198,6 +255,14 @@ export function crearServidor(config = {}) {
  * @returns {import('node:http').Server}
  */
 export function iniciarServidor(config = {}) {
-    throw new Error('Not implemented: iniciarServidor');
+    const puerto = config.puerto || 3000;
+    const logger = config.logger || crearLogger();
+    const server = crearServidor({ ...config, logger });
+
+    server.listen(puerto, () => {
+        logger.registrar(`Servidor en http://localhost:${puerto}`);
+    });
+
+    return server;
 }
 
