@@ -14,6 +14,7 @@ import { RepositorioAlumnos, datosSemilla } from '../src/repositorio.js';
 let servidor;
 let base;
 
+
 const CLAVE = 'clave-test';
 
 function levantar(app) {

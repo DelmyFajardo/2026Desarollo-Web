@@ -5,6 +5,7 @@
 **Docente:** Ing. Marco Tulio Valdez
 **Duración:** 3–4 días · 30–45 min/día
 
+
 ## 🎯 Objetivo
 
 Construir una **API REST** con **Express** para gestionar **alumnos** (nombre, apellido, email, edad), y un **sitio web** servido como archivos estáticos por el mismo Express que opera el CRUD usando **Fetch**, **CSS** y **`<dialog>`**. Todas las operaciones de escritura pasan por un **middleware de autenticación falsa** que valida el header `x-api-key`. El **frontend también tiene pruebas** (con `jsdom` y `fetch` mockeado) que verifican la tabla, los `<dialog>` y las llamadas `POST`/`PUT`/`DELETE`.

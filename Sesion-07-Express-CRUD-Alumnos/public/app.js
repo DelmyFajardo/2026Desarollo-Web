@@ -6,6 +6,7 @@
  * `x-api-key` en las operaciones de escritura (POST, PUT, DELETE).
  */
 
+
 const API = '/alumnos';
 const API_KEY = 'umg-2026'; // debe coincidir con config.env
 

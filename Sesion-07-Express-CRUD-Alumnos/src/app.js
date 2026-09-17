@@ -7,6 +7,7 @@
  * que debe cumplir cada endpoint (son tu guía).
  */
 
+
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

@@ -12,6 +12,7 @@
  *    #dialogoEliminar, #btnConfirmarEliminar, #mensaje, etc.).
  */
 
+
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';

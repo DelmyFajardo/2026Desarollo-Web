@@ -6,6 +6,7 @@
  * Se carga configuración con: node --env-file=config.env src/index.js
  */
 
+
 import { crearApp } from './app.js';
 import { RepositorioAlumnos, datosSemilla } from './repositorio.js';
 
