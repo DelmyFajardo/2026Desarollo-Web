@@ -33,7 +33,33 @@ let idAEliminar = null;
  * Cada fila debe incluir botones "Editar" y "Eliminar".
  */
 async function cargarAlumnos() {
-    throw new Error('TODO: implementar cargarAlumnos()');
+    try {
+        const res = await fetch(API);
+        if (!res.ok) throw new Error('Error al cargar la lista de alumnos');
+        const alumnos = await res.json();
+
+        tabla.innerHTML = '';
+        alumnos.forEach((alumno) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${alumno.nombre} ${alumno.apellido}</td>
+                <td>${alumno.email}</td>
+                <td>${alumno.edad ?? ''}</td>
+                <td>
+                    <button class="btn-editar" data-id="${alumno.id}">Editar</button>
+                    <button class="btn-eliminar" data-id="${alumno.id}">Eliminar</button>
+                </td>
+            `;
+
+            // Eventos para botones dentro de la fila
+            tr.querySelector('.btn-editar').addEventListener('click', () => abrirDialogoEditar(alumno.id));
+            tr.querySelector('.btn-eliminar').addEventListener('click', () => eliminarAlumno(alumno.id, `${alumno.nombre} ${alumno.apellido}`));
+
+            tabla.appendChild(tr);
+        });
+    } catch (error) {
+        mostrarMensaje(error.message, 'error');
+    }
 }
 
 /**
@@ -41,7 +67,10 @@ async function cargarAlumnos() {
  * idEnEdicion = null y abre dialogoForm con showModal().
  */
 function abrirDialogoNuevo() {
-    throw new Error('TODO: implementar abrirDialogoNuevo()');
+    idEnEdicion = null;
+    form.reset();
+    if (tituloForm) tituloForm.textContent = 'Nuevo alumno';
+    dialogoForm.showModal();
 }
 
 /**
@@ -50,8 +79,24 @@ function abrirDialogoNuevo() {
  * y abre dialogoForm.
  */
 function abrirDialogoEditar(id) {
-    throw new Error('TODO: implementar abrirDialogoEditar()');
-}
+    try {
+        if (typeof alumno === 'object' && alumno !== null) {
+        idEnEdicion = alumno.id;
+        if (tituloForm) tituloForm.textContent = 'Editar alumno';
+
+            form.nombre.value = alumno.nombre;
+            form.apellido.value = alumno.apellido;
+            form.email.value = alumno.email;
+            form.edad.value = alumno.edad ?? '';
+
+            dialogoForm.showModal();
+        } 
+        if (dialogoForm) dialogoForm.showModal();
+    }
+    catch (error) {
+        mostrarMensaje('Error al abrir el diálogo de edición', 'error');
+    }
+S}
 
 /**
  * TODO: lee los campos del formulario y llama a la API.
@@ -61,7 +106,38 @@ function abrirDialogoEditar(id) {
  * recarga la lista y muestra un mensaje.
  */
 async function guardarAlumno(event) {
-    throw new Error('TODO: implementar guardarAlumno()');
+    if (event) event.preventDefault();
+
+  const datos = {
+    nombre: form.nombre.value,
+    apellido: form.apellido.value,
+    email: form.email.value,
+    ...(form.edad.value !== '' ? { edad: Number(form.edad.value) } : {})
+  };
+
+  const esEdicion = Boolean(idEnEdicion);
+  const url = esEdicion ? `${API}/${idEnEdicion}` : API;
+  const metodo = esEdicion ? 'PUT' : 'POST';
+
+  try {
+    const res = await fetch(url, {
+      method: metodo,
+      headers: cabeceras(true),
+      body: JSON.stringify(datos)
+    });
+
+    const respuesta = await res.json();
+
+    if (!res.ok) {
+      throw new Error(respuesta.error || 'Error al guardar');
+    }
+
+    if (dialogoForm) dialogoForm.close();
+    await cargarAlumnos();
+    mostrarMensaje(esEdicion ? 'Alumno actualizado' : 'Alumno creado', 'ok');
+  } catch (error) {
+    mostrarMensaje(error.message, 'error');
+  }
 }
 
 /**
@@ -69,24 +145,40 @@ async function guardarAlumno(event) {
  * DELETE /alumnos/:id con cabeceras(false). Luego recarga y avisa.
  */
 function eliminarAlumno(id) {
-    throw new Error('TODO: implementar eliminarAlumno()');
+    idAEliminar = id;
+    if (nombreEliminar) {
+        nombreEliminar.textContent = nombreCompleto;
+    }
+    dialogoEliminar.showModal();
 }
 
 /**
  * TODO: helper para mostrar mensajes (error en rojo, éxito en verde).
  */
 function mostrarMensaje(texto, tipo = 'ok') {
-    throw new Error('TODO: implementar mostrarMensaje()');
+    if (!mensaje) return;
+    mensaje.textContent = texto;
+    mensaje.className = tipo; // Permite aplicar clases CSS como .ok o .error
+    mensaje.hidden = false;
+
+    setTimeout(() => {
+        mensaje.hidden = true;
+    }, 4000);
 }
 
 // ============================================================
 // Conexión de eventos (TODO: completa lo que falte)
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+    btnNuevo?.addEventListener('click', abrirDialogoNuevo);
+    form?.addEventListener('submit', guardarAlumno);
+    btnCancelarForm?.addEventListener('click', () => dialogoForm.close());
+    btnCancelarEliminar?.addEventListener('click', () => dialogoEliminar.close());
+    btnConfirmarEliminar?.addEventListener('click', ejecutarEliminar);
     // TODO: botón "Nuevo alumno" → abrirDialogoNuevo()
     // TODO: form submit → guardarAlumno(event)
     // TODO: botón cancelar → dialogoForm.close()
     // TODO: botón cancelar eliminar → dialogoEliminar.close()
     // TODO: botón confirmar eliminar → ejecutar el DELETE
     // TODO: llamar cargarAlumnos() al iniciar
-});
+})
